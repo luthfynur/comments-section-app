@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import Login from './pages/Login';
+import Comments from './pages/Comments';
+import Register from './pages/Register';
 
 function App() {
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(
+        'https://lnwics-api.herokuapp.com/api/user/current-user',
+        { withCredentials: true }
+      );
+      setUser(response.data);
+    };
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/login"
+          element={<Login user={user} setUser={setUser} />}
+        />
+        <Route path="/signup" element={<Register />} />
+        <Route path="/" element={<Comments setUser={setUser} user={user} />} />
+      </Routes>
+    </Router>
   );
 }
 
